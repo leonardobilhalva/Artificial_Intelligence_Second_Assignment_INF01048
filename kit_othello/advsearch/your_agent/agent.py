@@ -7,7 +7,8 @@ from ..othello.gamestate import GameState
 PLUS_INF = float('inf')
 MINUS_INF = float('-inf')
 MAX_DEPTH = 5
-
+MIN_DEPTH = 0
+NONE_POS = (-1, -1)
 
 def make_move(state: GameState) -> Tuple[int, int]:
     """
@@ -18,18 +19,21 @@ def make_move(state: GameState) -> Tuple[int, int]:
     if state.player != 'B' or state.player != 'W':
         raise ValueError("Player is neither black or white colored")
     
-    _, nextMove = maxValue(state, 0, MINUS_INF, PLUS_INF)
+    _, nextMove = maxValue(state, MIN_DEPTH, MINUS_INF, PLUS_INF)
     return nextMove
 
 def maxValue(state, depth, alpha, beta):
     if shouldEval(state, depth):
-        return heuristicEvaluation(state), (-1, -1)
+        return heuristicEvaluation(state), NONE_POS
     v = MINUS_INF
     
     
-    for play in state.board.legal_moves():       
+    for play in state.board.legal_moves():
         
-        v = max(v, minValue(play)) #
+        
+        actualHeuristic = max(v, minValue(play)) #
+        if actualHeuristic > v:
+            v = actualHeuristic
     return v
 
 
@@ -39,7 +43,7 @@ def maxValue(state, depth, alpha, beta):
 
 def minValue(state, depth, alpha, beta):
     if shouldEval(state, depth):
-        return heuristicEvaluation(state), (-1, -1)
+        return heuristicEvaluation(state), NONE_POS
     v = PLUS_INF
     
     
