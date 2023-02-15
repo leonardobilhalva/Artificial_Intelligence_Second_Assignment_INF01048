@@ -6,13 +6,7 @@ from ..othello.gamestate import GameState
 
 PLUS_INF = float('inf')
 MINUS_INF = float('-inf')
-
-
-# Voce pode criar funcoes auxiliares neste arquivo
-# e tambem modulos auxiliares neste pacote.
-#
-# Nao esqueca de renomear 'your_agent' com o nome
-# do seu agente.
+MAX_DEPTH = 5
 
 
 def make_move(state: GameState) -> Tuple[int, int]:
@@ -21,29 +15,43 @@ def make_move(state: GameState) -> Tuple[int, int]:
     :param state: state to make the move
     :return: (int, int) tuple with x, y coordinates of the move (remember: 0 is the first row/column)
     """
-    # o codigo abaixo apenas retorna um movimento aleatorio valido para
-    # a primeira jogada com as pretas.
-    # Remova-o e coloque a sua implementacao da poda alpha-beta
-    #return random.choice([(2, 3), (4, 5), (5, 4), (3, 2)])
+    if state.player != 'B' or state.player != 'W':
+        raise ValueError("Player is neither black or white colored")
     
-    return maxValue(state)
+    _, nextMove = maxValue(state, 0, MINUS_INF, PLUS_INF)
+    return nextMove
 
-def maxValue(estado):
-    if testeTerminal(estado):
-        return utilidade(estado)
+def maxValue(state, depth, alpha, beta):
+    if shouldEval(state, depth):
+        return heuristicEvaluation(state), (-1, -1)
     v = MINUS_INF
-    for jogada in jogadas:
-        v = max(v, minValue(jogada))
-    return v
-
-
-def minValue(estado):
-    if testeTerminal(estado):
-        return utilidade(estado)
-    v = PLUS_INF
-    for jogada in jogadas:
-        v = min(v, maxValue(jogada))
-    return v
-
-
     
+    
+    for play in state.board.legal_moves():       
+        
+        v = max(v, minValue(play)) #
+    return v
+
+
+
+
+
+
+def minValue(state, depth, alpha, beta):
+    if shouldEval(state, depth):
+        return heuristicEvaluation(state), (-1, -1)
+    v = PLUS_INF
+    
+    
+    for play in state.board.legal_moves():
+        v = min(v, maxValue(play))
+    return v
+
+
+
+def shouldEval(state: GameState, depth):
+    '''check if 'state' should be evaluated by heuristic'''
+    return depth > MAX_DEPTH  or state.board.is_terminal_state() or (not state.board.has_legal_move(state.player) and depth == 0)
+
+def heuristicEvaluation(state: GameState):    
+    return random.randint(-10, 10)
