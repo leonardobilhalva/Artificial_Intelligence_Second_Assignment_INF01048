@@ -79,10 +79,10 @@ def heuristicEvaluation(state: GameState):
     this function was based on the following article: https://courses.cs.washington.edu/courses/cse573/04au/Project/mini1/RUSSIA/Final_Paper.pdf
     and also used the corner reach idea of this post: https://kartikkukreja.wordpress.com/2013/03/30/heuristic-function-for-reversiothello/ (based on the previous article too)'''
     
-    weightParityHeuristic = 0
-    weightMobilityHeuristic = 0
-    weightCornerHeuristic = 0
-    weightCornerReachHeuristic = 0
+    weightParityHeuristic = 20
+    weightMobilityHeuristic = 40
+    weightCornerHeuristic = 180
+    weightCornerReachHeuristic = 60
     
     maxCoins = state.board.num_pieces(state.player)
     minCoins = state.board.num_pieces(state.board.opponent(state.player))    
